@@ -1,4 +1,6 @@
+/* testcases */
 #include"either.h"
+#include"parsec.h"
 #include"util.h"
 #include<cassert>
 
