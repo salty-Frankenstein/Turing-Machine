@@ -14,6 +14,15 @@ Parsec<char> Parser::notChar(char _c) {
     return satisfy([=](char c) {return c != _c;});
 }
 
+bool Parser::isEmpty(const string& s) {
+    for(auto c : s){
+        if(c != ' ' && c != '\t' && c != '\n'){
+            return false;
+        }
+    }
+    return true;
+}
+
 Parser::Code Parser::preprocess(const Parser::Code& code) {
     auto parseLine
         = many(notChar(';')) << isChar(';') << many(allChar)
@@ -23,7 +32,10 @@ Parser::Code Parser::preprocess(const Parser::Code& code) {
     for (auto line : code) {
         auto res = parseLine(line);
         assert(res->isRight());     // this parsec shall parse all strings
-        result.push_back(tostring(res->getRight().first));
+        auto newLine = tostring(res->getRight().first);
+        if(!isEmpty(newLine)){
+            result.push_back(newLine);
+        }
     }
     return result;
 }

@@ -13,10 +13,11 @@ public:
 
     Parser();
 
-    /* removing all comments */
+    /* removing all comments and empty lines */
     Code preprocess(const Code& code);
 
 private:
+    bool isEmpty(const std::string& s);
     const Parsec<char> allChar;
     Parsec<char> isChar(char c);
     Parsec<char> notChar(char c);

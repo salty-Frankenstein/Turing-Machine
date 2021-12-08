@@ -112,9 +112,18 @@ Test testIR = Test("IR", []() {
     m.print();
     });
 
+Test testParser = Test("Parser", []() {
+    Parser p;
+    auto res = p.preprocess({"abcd", "abc;d", " ;cd;e", " ;"});
+    assert(res.front() == "abcd"); res.pop_front();
+    assert(res.front() == "abc"); res.pop_front();
+    assert(res.empty());
+    });
+
 int main() {
     testEither();
     testParsec();
     testIR();
+    testParser();
     return 0;
 }
