@@ -4,15 +4,22 @@
 #include"parsec.h"
 #include"ir.h"
 #include<string>
-
+#include<list>
 
 class Parser {
 public:
+    /* code is lines of strings */
+    using Code = std::list<std::string>;
+
+    Parser();
+
     /* removing all comments */
-    std::string preprocess(const std::string& code);
+    Code preprocess(const Code& code);
 
 private:
-    // Parsec<char> 
+    const Parsec<char> allChar;
+    Parsec<char> isChar(char c);
+    Parsec<char> notChar(char c);
 };
 
 

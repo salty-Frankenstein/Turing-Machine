@@ -72,6 +72,9 @@ public:
     template<typename A, typename B>
     friend Parsec<B> operator*(Parsec<std::function<B(A)>> pf, Parsec<A> p);
 
+    template<typename A>
+    friend Parsec<A> operator|(Parsec<A> p1, Parsec<A> p2);
+
 private:
     aT f;
 };
@@ -98,7 +101,7 @@ Parsec<B> operator*(Parsec<std::function<B(A)>> pf, Parsec<A> p) {
                 return makeRes<B>({ f(res2.first), res2.second });
             }
             assert(t2->isLeft());//TODO: assertion
-            return makeError<B>(showError(t2) + 
+            return makeError<B>(showError(t2) +
                 ",\nwhen parsing " + show(str2) + ", trying to parse: " + show(str));
         }
         assert(t1->isLeft());//TODO: assertion
@@ -141,6 +144,15 @@ Parsec<A> operator<<(Parsec<A> p1, Parsec<B> p2) {
     auto p = pure(std::function<std::function<A(B)>(A)>(
         [](A a)->std::function<A(B)> { return [=](B b)->A { return a; };}));
     return p * p1 * p2;
+}
+
+
+template<typename A>
+Parsec<A> operator|(Parsec<A> p1, Parsec<A> p2) {
+    return Parsec<A>([=](String str)->ParseRes<A> {
+        auto res = p1(str);
+        if (res->isLeft())return p2(str);
+        return res;});
 }
 
 #endif

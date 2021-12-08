@@ -1,6 +1,7 @@
 /* testcases */
 #include"either.h"
 #include"parsec.h"
+#include"parser.h"
 #include"util.h"
 #include"ir.h"
 #include<cassert>
@@ -77,6 +78,23 @@ Test testParsec = Test("Parsec", []() {
     cout << res4->getLeft() << endl;
     cout << endl;
 
+    auto allChar = satisfy([](char _) {return true;});
+    auto notComma = satisfy([](char c) {return c != ',';});
+    auto isComma = satisfy([](char c) {return c == ',';});
+    auto parser2
+        = many(notComma) << isComma << many(allChar)
+        | many(notComma);
+    auto res5 = parser2("asdf,adsf");
+    assert(res5->isRight());
+    auto r5 = res5->getRight();
+    cout << show(r5.first) + ", " + show(r5.second) << endl;
+    cout << endl;
+
+    auto res6 = parser2("asdfadsf");
+    assert(res6->isRight());
+    auto r6 = res6->getRight();
+    cout << show(r6.first) + ", " + show(r6.second) << endl;
+    cout << endl;
     });
 
 Test testIR = Test("IR", []() {
