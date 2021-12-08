@@ -2,6 +2,7 @@
 #include"either.h"
 #include"parsec.h"
 #include"util.h"
+#include"ir.h"
 #include<cassert>
 #include<functional>
 #include<string>
@@ -78,8 +79,24 @@ Test testParsec = Test("Parsec", []() {
 
     });
 
+Test testIR = Test("IR", []() {
+    TuringMachine m(
+        { "0", "cmp", "halt_accept" },
+        { '0', '1' },
+        { '0', '1', '_' },
+        { "0" },
+        '_',
+        { "halt_accept" },
+        2,
+        { {"cmp", {'0', '1'}, {'_', '_'}, {RIGHT, LEFT}, "0"} }
+    );
+
+    m.print();
+    });
+
 int main() {
     testEither();
     testParsec();
+    testIR();
     return 0;
 }
