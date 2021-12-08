@@ -1,3 +1,4 @@
+/* intermediate representation */
 #include"ir.h"
 #include<iostream>
 using namespace std;

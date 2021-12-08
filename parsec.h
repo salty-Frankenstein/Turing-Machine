@@ -11,19 +11,13 @@
 using String = std::list<char>;
 
 /* String to std::string */
-std::string tostring(const String& s) {
-    return std::string(s.begin(), s.end());
-}
+std::string tostring(const String& s);
 
 /* show String */
-std::string show(const String& s){
-    return "\"" + tostring(s) + "\""; 
-}
+std::string show(const String& s);
 
 /* std::string to String */
-String toString(const std::string& s) {
-    return String(s.begin(), s.end());
-}
+String toString(const std::string& s);
 
 /* the error message of the parsing process */
 using Msg = std::string;
@@ -82,23 +76,7 @@ private:
     aT f;
 };
 
-Parsec<char> satisfy(std::function<bool(char)> f) {
-    return Parsec<char>([=](String s)->ParseRes<char> {
-        if (s.empty()) {
-            return makeError<char>("Unexpected end of string");
-        }
-        auto i = s.begin();
-        auto head = *i;
-        i++;
-        String res = String(i, s.end());
-        if (f(head)) {
-            return makeRes<char>({ head, res });
-        }
-        return makeError<char>(
-            std::string("'") + head + "' cannot satisfy the given rule");
-        }
-    );
-}
+Parsec<char> satisfy(std::function<bool(char)> f);
 
 template<typename A>
 Parsec<A> pure(const A a) {
