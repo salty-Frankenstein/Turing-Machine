@@ -52,8 +52,22 @@ Parsec<list<A>> sepBy(const Parsec<A> p, const Parsec<SEP> sep) {
     return pure(cons) * p * many(sep >> p);
 }
 
+/* parse set with given set identifier
+ * and element parser combinator
+ */
+template<typename A>
+Parsec<list<A>> parseSet(const string& id, const Parsec<A> parseElem) {
+    return isString(id) >> 
+        isChar('{') >> sepBy(parseElem, isChar(',')) << isChar('}');
+}
+
 const auto parseState = pure(function<string(String)>(tostring)) * many(nonBlank);
 const auto parseChar = printable;
+
+const Parsec<list<State>> Parser::parseStateSet = parseSet("#Q = ", parseState);
+const Parsec<list<Char>> Parser::parseInputSet = parseSet("#S = ", parseChar);
+const Parsec<list<Char>> Parser::parseTapeSet = parseSet("#G = ", parseChar);
+const Parsec<list<State>> Parser::parseFinalStateSet = parseSet("#F = ", parseState);
 
 Parser::Code Parser::readFile(istream& is) {
     Parser::Code result;
@@ -68,10 +82,6 @@ Parser::Code Parser::readFile(istream& is) {
 
 TuringMachine Parser::parse(const Parser::Code& code) {
 }
-
-const Parsec<list<State>> Parser::parseStateSet 
-    = isString("#Q = ") >>
-    isChar('{') >> sepBy(parseState, isChar(',')) << isChar('}');
 
 bool Parser::isEmpty(const string& s) {
     for (auto c : s) {

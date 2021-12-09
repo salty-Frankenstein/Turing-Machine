@@ -28,6 +28,32 @@ private:
     const function<void()> callback;
 };
 
+void print(String x) { cout << show(x) << endl; }
+void print(char x) { cout << x << endl; }
+void print(string x) { cout << x << endl; }
+template<typename A>
+void print(list<A> x) { for (auto i : x) print(x); }
+void print(list<string> x) { for (auto i : x) print(i); }
+
+template<typename A>
+void tParse(const string& testName, const Parsec<A> testParser,
+    const string& testStr, bool expect,
+    function<bool(Res<A>)> assertion = [](Res<A> a) {return true;}) {
+
+    log("test parse " + testName);
+
+    auto res = testParser(testStr);
+    if (expect) {
+        auto r = res->getRight();
+        cout << "result: ";
+        print(r.first);
+        cout << "rest: " << show(r.second) << endl;
+        assert(assertion(r));
+    }
+    else {
+        cout << res->getLeft() << endl;
+    }
+}
 
 Test testEither = Test("Either", []() {
     Either<int, bool> l1 = Left<int, bool>(1),
@@ -57,27 +83,15 @@ Test testParsec = Test("Parsec", []() {
     auto rightP = satisfy([](char c) {return c == ')';});
     auto toUpper = pure(function<char(char)>([](char c) {return c - 'a' + 'A';}));
     auto parser1 = leftP >> many(toUpper * alpha) << rightP;
-    auto res1 = parser1("(abc)");
-    assert(res1->isRight());
-    auto r1 = res1->getRight();
-    cout << show(r1.first) + ", " + show(r1.second) << endl;
-    cout << endl;
-    assert(tostring(r1.first) == "ABC" && tostring(r1.second) == "");
 
-    auto res2 = parser1("(ab");
-    assert(res2->isLeft());
-    cout << res2->getLeft() << endl;
-    cout << endl;
-
-    auto res3 = parser1("a(ab)");
-    assert(res3->isLeft());
-    cout << res3->getLeft() << endl;
-    cout << endl;
-
-    auto res4 = parser1("(ab1)");
-    assert(res4->isLeft());
-    cout << res4->getLeft() << endl;
-    cout << endl;
+    // assert(tostring(r1.first) == "ABC" && tostring(r1.second) == "");
+    tParse("parser1 test1", parser1, "(abc)", true,
+        function<bool(Res<String>)>([](Res<String> r) {
+            return tostring(r.first) == "ABC"
+                && tostring(r.second) == ""; }));
+    tParse("parser1 test2", parser1, "(ab", false);
+    tParse("parser1 test3", parser1, "a(ab)", false);
+    tParse("parser1 test4", parser1, "(ab1)", false);
 
     auto allChar = satisfy([](char _) {return true;});
     auto notComma = satisfy([](char c) {return c != ',';});
@@ -85,28 +99,15 @@ Test testParsec = Test("Parsec", []() {
     auto parser2
         = many(notComma) << isComma << many(allChar)
         | many(notComma);
-    auto res5 = parser2("asdf,adsf");
-    assert(res5->isRight());
-    auto r5 = res5->getRight();
-    cout << show(r5.first) + ", " + show(r5.second) << endl;
-    cout << endl;
-
-    auto res6 = parser2("asdfadsf");
-    assert(res6->isRight());
-    auto r6 = res6->getRight();
-    cout << show(r6.first) + ", " + show(r6.second) << endl;
-    cout << endl;
+    tParse("parser2 test1", parser2, "asdf,adsf", true);
+    tParse("parser2 test2", parser2, "asdfadsf", true);
 
     string s("abcde");
     auto parser3 = pure(' ');
     for (char c : s) {
         parser3 = parser3 >> satisfy([=](char _c) {return c == _c;});
     }
-    auto res7 = parser3("abcde");
-    assert(res7->isRight());
-    auto r7 = res7->getRight();
-    cout << r7.first << ", " + show(r7.second) << endl;
-    cout << endl;
+    tParse("parser3", parser3, s, true);
 
     });
 
@@ -139,14 +140,11 @@ Test testParser = Test("Parser", []() {
         cout << i << endl;
     }
 
-    log("test parse state set");
-    auto res3 = p.parseStateSet("#Q = {0,cp,accept2,halt_}");
-    // cout << res3->getLeft() << endl;
-    assert(res3->isRight());
-    auto r3 = res3->getRight();
-    for(auto i : r3.first){
-        cout << i << endl;
-    }
+    tParse("state set", p.parseStateSet, "#Q = {0,cp,accept2,halt_}", true);
+    tParse("input set", p.parseInputSet, "#S = {0,1}", true);
+    tParse("tape set", p.parseTapeSet, "#G = {0,1,_,t,r,u,e,f,a,l,s}", true);
+    tParse("final state set", p.parseFinalStateSet, "#F = {halt_accept}", true);
+
     });
 
 int main() {

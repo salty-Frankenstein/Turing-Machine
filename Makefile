@@ -1,16 +1,16 @@
 runtest:test
 	./test
 
-test:ir.o parser.o parsec.o
+test:ir.o parser.o parsec.o test.cpp
 	g++ test.cpp ir.o parser.o parsec.o -Wall -Werror -o test
 
-parser:ir.o parsec.o
+parser:ir.o parsec.o parser.cpp 
 	g++ parser.cpp ir.o parsec.o -Wall -Werror -o parser.o
 
-ir:
+ir:ir.cpp 
 	g++ ir.cpp -Wall -Werror -o ir.o
 
-parsec:
+parsec:parsec.cpp
 	g++ parsec.cpp -Wall -Werror -o parsec.o
 
 clean:

@@ -22,7 +22,9 @@ public:
     static TuringMachine parse(const Code& code);
 
     const static Parsec<std::list<State>> parseStateSet;
-    // const static Parsec<std::list<State>> parseState;
+    const static Parsec<std::list<Char>> parseInputSet;
+    const static Parsec<std::list<Char>> parseTapeSet;
+    const static Parsec<std::list<State>> parseFinalStateSet;
 
 private:
     static bool isEmpty(const std::string& s);
