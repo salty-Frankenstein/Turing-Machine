@@ -79,7 +79,7 @@ private:
     aT f;
 };
 
-Parsec<char> satisfy(std::function<bool(char)> f);
+Parsec<char> satisfy(std::function<bool(char)> f, const std::string& info = "");
 
 template<typename A>
 Parsec<A> pure(const A a) {

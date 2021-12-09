@@ -38,7 +38,9 @@ public:
         const std::list<FuncLine>& function
     );
 
+#ifndef NDEBUG
     void print(); //DEBUG
+#endif
 
 private:
     const std::list<State> stateSet;

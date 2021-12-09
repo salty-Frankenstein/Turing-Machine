@@ -49,6 +49,7 @@ TuringMachine::TuringMachine(
     function(_function) {
 }
 
+#ifndef NDEBUG
 void TuringMachine::print() {
     printList("State set", stateSet);
     printList("Input set", inputSet);
@@ -59,3 +60,4 @@ void TuringMachine::print() {
     cout << "Tape num: " << tapeNum << endl;
 
 }
+#endif

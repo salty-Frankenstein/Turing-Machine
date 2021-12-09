@@ -5,24 +5,25 @@
 #include"ir.h"
 #include<string>
 #include<list>
+#include<iostream>
 
 class Parser {
 public:
     /* code is lines of strings */
     using Code = std::list<std::string>;
 
-    Parser();
+    /* read code file from istream  */
+    static Code readFile(std::istream& is);
 
     /* removing all comments and empty lines */
-    Code preprocess(const Code& code);
+    static Code preprocess(const Code& code);
 
+    /* parse the sourse code into IR */
+    static TuringMachine parse(const Code& code);
+
+    const static Parsec<std::list<State>> parseStateSet;
 private:
-    bool isEmpty(const std::string& s);
-    const Parsec<char> allChar;
-    Parsec<char> isChar(char c);
-    Parsec<char> notChar(char c);
+    static bool isEmpty(const std::string& s);
 };
-
-
 
 #endif

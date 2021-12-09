@@ -7,6 +7,7 @@
 #include<cassert>
 #include<functional>
 #include<string>
+#include<fstream>
 
 using namespace std;
 
@@ -95,6 +96,18 @@ Test testParsec = Test("Parsec", []() {
     auto r6 = res6->getRight();
     cout << show(r6.first) + ", " + show(r6.second) << endl;
     cout << endl;
+
+    string s("abcde");
+    auto parser3 = pure(' ');
+    for(char c : s){
+        parser3 = parser3 >> satisfy([=](char _c) {return c == _c;});
+    }
+    auto res7 = parser3("abcde");
+    assert(res7->isRight());
+    auto r7 = res7->getRight();
+    cout << r7.first << ", " + show(r7.second) << endl;
+    cout << endl;
+
     });
 
 Test testIR = Test("IR", []() {
@@ -118,6 +131,20 @@ Test testParser = Test("Parser", []() {
     assert(res.front() == "abcd"); res.pop_front();
     assert(res.front() == "abc"); res.pop_front();
     assert(res.empty());
+
+    ifstream f("input/test.tm");
+    auto code = p.readFile(f);
+    auto res2 = p.preprocess(code);
+    for(auto i : res2){
+        cout << i << endl;
+    } 
+
+    auto res3 = p.parseStateSet("#Q = {0,cp,accept2,halt_}");
+    cout << res3->getLeft() << endl;
+    // assert(res3->isRight());
+    // for(auto i : res){
+    //     cout << i << endl;
+    // }
     });
 
 int main() {
