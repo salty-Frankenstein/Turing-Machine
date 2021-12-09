@@ -34,7 +34,25 @@ Parsec<Char> isString(const string& s) {
     return parser;
 }
 
-const auto parseState = pure(function<State(String)>(tostring)) * many(nonBlank);
+/* parses /one/ or more occurrences of p, separated
+ * by sep. Returns a list of values returned by p.
+ * > pure (:) <*> p <*> many (sep >> p)
+ */
+template<typename A, typename SEP>
+Parsec<list<A>> sepBy(const Parsec<A> p, const Parsec<SEP> sep) {
+    // HACK: cons is defined internel here, 
+    // since it will cause a bad function call otherwise
+    // IDK why...
+    function< function<list<A>(list<A>)>(A)> cons =
+        [](const A& a) {
+        return [=](list<A> l) {
+            l.push_front(a);
+            return l;
+        };};
+    return pure(cons) * p * many(sep >> p);
+}
+
+const auto parseState = pure(function<string(String)>(tostring)) * many(nonBlank);
 const auto parseChar = printable;
 
 Parser::Code Parser::readFile(istream& is) {
@@ -51,9 +69,9 @@ Parser::Code Parser::readFile(istream& is) {
 TuringMachine Parser::parse(const Parser::Code& code) {
 }
 
-const Parsec<list<State>> Parser::parseStateSet
-= isString("#Q = ") >>
-isChar('{') >> many(parseState << isChar(',')) << isChar('}');
+const Parsec<list<State>> Parser::parseStateSet 
+    = isString("#Q = ") >>
+    isChar('{') >> sepBy(parseState, isChar(',')) << isChar('}');
 
 bool Parser::isEmpty(const string& s) {
     for (auto c : s) {

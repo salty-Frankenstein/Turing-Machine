@@ -12,7 +12,7 @@ String toString(const std::string& s) {
     return String(s.begin(), s.end());
 }
 
-Parsec<char> satisfy(std::function<bool(char)> f, const std::string& info) {
+Parsec<char> satisfy(const std::function<bool(char)> f, const std::string& info) {
     return Parsec<char>([=](String s)->ParseRes<char> {
         if (s.empty()) {
             return makeError<char>("Unexpected end of string");

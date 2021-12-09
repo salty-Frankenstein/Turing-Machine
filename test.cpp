@@ -99,7 +99,7 @@ Test testParsec = Test("Parsec", []() {
 
     string s("abcde");
     auto parser3 = pure(' ');
-    for(char c : s){
+    for (char c : s) {
         parser3 = parser3 >> satisfy([=](char _c) {return c == _c;});
     }
     auto res7 = parser3("abcde");
@@ -127,7 +127,7 @@ Test testIR = Test("IR", []() {
 
 Test testParser = Test("Parser", []() {
     Parser p;
-    auto res = p.preprocess({"abcd", "abc;d", " ;cd;e", " ;"});
+    auto res = p.preprocess({ "abcd", "abc;d", " ;cd;e", " ;" });
     assert(res.front() == "abcd"); res.pop_front();
     assert(res.front() == "abc"); res.pop_front();
     assert(res.empty());
@@ -135,16 +135,18 @@ Test testParser = Test("Parser", []() {
     ifstream f("input/test.tm");
     auto code = p.readFile(f);
     auto res2 = p.preprocess(code);
-    for(auto i : res2){
+    for (auto i : res2) {
         cout << i << endl;
-    } 
+    }
 
+    log("test parse state set");
     auto res3 = p.parseStateSet("#Q = {0,cp,accept2,halt_}");
-    cout << res3->getLeft() << endl;
-    // assert(res3->isRight());
-    // for(auto i : res){
-    //     cout << i << endl;
-    // }
+    // cout << res3->getLeft() << endl;
+    assert(res3->isRight());
+    auto r3 = res3->getRight();
+    for(auto i : r3.first){
+        cout << i << endl;
+    }
     });
 
 int main() {

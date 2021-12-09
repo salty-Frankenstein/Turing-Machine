@@ -55,31 +55,31 @@ public:
 
     Parsec(aT t) : f(t) {}
 
-    ParseRes<T> operator()(std::string s) const {
+    ParseRes<T> operator()(const std::string& s) const {
         return f(toString(s));
     }
 
-    ParseRes<T> operator()(String s) const {
+    ParseRes<T> operator()(const String& s) const {
         return f(s);
     }
 
     template<typename A, typename B>
-    friend Parsec<B> operator>>(Parsec<A> p1, Parsec<B> p2);
+    friend Parsec<B> operator>>(const Parsec<A>& p1, const Parsec<B>& p2);
 
     template<typename A, typename B>
-    friend Parsec<A> operator<<(Parsec<A> p1, Parsec<B> p2);
+    friend Parsec<A> operator<<(const Parsec<A>& p1, const Parsec<B>& p2);
 
     template<typename A, typename B>
-    friend Parsec<B> operator*(Parsec<std::function<B(A)>> pf, Parsec<A> p);
+    friend Parsec<B> operator*(const Parsec<std::function<B(A)>>& pf, const Parsec<A>& p);
 
     template<typename A>
-    friend Parsec<A> operator|(Parsec<A> p1, Parsec<A> p2);
+    friend Parsec<A> operator|(const Parsec<A>& p1, const Parsec<A>& p2);
 
 private:
     aT f;
 };
 
-Parsec<char> satisfy(std::function<bool(char)> f, const std::string& info = "");
+Parsec<char> satisfy(const std::function<bool(char)> f, const std::string& info = "");
 
 template<typename A>
 Parsec<A> pure(const A a) {
@@ -88,7 +88,7 @@ Parsec<A> pure(const A a) {
 }
 
 template<typename A, typename B>
-Parsec<B> operator*(Parsec<std::function<B(A)>> pf, Parsec<A> p) {
+Parsec<B> operator*(const Parsec<std::function<B(A)>>& pf, const Parsec<A>& p) {
     return Parsec<B>([=](String str)->ParseRes<B> {
         auto t1 = pf(str);
         if (t1->isRight()) {
@@ -111,7 +111,7 @@ Parsec<B> operator*(Parsec<std::function<B(A)>> pf, Parsec<A> p) {
 }
 
 template<typename A>
-Res<std::list<A>> many_(Parsec<A> p, String str) {
+Res<std::list<A>> many_(const Parsec<A>& p, const String& str) {
     auto t = p(str);
     if (t->isRight()) {
         auto res1 = t->getRight();
@@ -127,20 +127,20 @@ Res<std::list<A>> many_(Parsec<A> p, String str) {
 }
 
 template<typename A>
-Parsec<std::list<A>> many(Parsec<A> p) {
+Parsec<std::list<A>> many(const Parsec<A>& p) {
     return Parsec<std::list<A>>([=](String str)->ParseRes<std::list<A>> {
         return makeRes<std::list<A>>(many_(p, str));});
 }
 
 template<typename A, typename B>
-Parsec<B> operator>>(Parsec<A> p1, Parsec<B> p2) {
+Parsec<B> operator>>(const Parsec<A>& p1, const Parsec<B>& p2) {
     auto p = pure(std::function<std::function<B(B)>(A)>(
         [](A a)->std::function<B(B)> { return [](B b)->B { return b; };}));
     return p * p1 * p2;
 }
 
 template<typename A, typename B>
-Parsec<A> operator<<(Parsec<A> p1, Parsec<B> p2) {
+Parsec<A> operator<<(const Parsec<A>& p1, const Parsec<B>& p2) {
     auto p = pure(std::function<std::function<A(B)>(A)>(
         [](A a)->std::function<A(B)> { return [=](B b)->A { return a; };}));
     return p * p1 * p2;
@@ -148,7 +148,7 @@ Parsec<A> operator<<(Parsec<A> p1, Parsec<B> p2) {
 
 
 template<typename A>
-Parsec<A> operator|(Parsec<A> p1, Parsec<A> p2) {
+Parsec<A> operator|(const Parsec<A>& p1, const Parsec<A>& p2) {
     return Parsec<A>([=](String str)->ParseRes<A> {
         auto res = p1(str);
         if (res->isLeft())return p2(str);
