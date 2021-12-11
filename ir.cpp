@@ -3,18 +3,6 @@
 #include<iostream>
 using namespace std;
 
-template<typename T>
-void printList(string name, list<T> l) {
-    cout << name + ": {";
-    auto last = l.end();
-    last--;
-    for (auto i = l.begin(); i != last; i++) {
-        cout << *i << ", ";
-    }
-    cout << *last;
-    cout << "}" << endl;
-
-}
 
 FuncLine::FuncLine(const State& _oldState,
     const std::list<Char>& _oldChar,
@@ -50,6 +38,19 @@ TuringMachine::TuringMachine(
 }
 
 #ifndef NDEBUG
+template<typename T>
+void printList(string name, list<T> l) {
+    cout << name + ": {";
+    auto last = l.end();
+    last--;
+    for (auto i = l.begin(); i != last; i++) {
+        cout << *i << ", ";
+    }
+    cout << *last;
+    cout << "}" << endl;
+
+}
+
 void TuringMachine::print() {
     printList("State set", stateSet);
     printList("Input set", inputSet);
@@ -59,5 +60,13 @@ void TuringMachine::print() {
     printList("Final state set", finalStateSet);
     cout << "Tape num: " << tapeNum << endl;
 
+}
+
+void FuncLine::print() {
+    cout << "Old state: " << oldState << endl;
+    printList("Old char", oldChar);
+    printList("New char", newChar);
+    printList("Direction", direction);
+    cout << "New state: " << newState << endl;
 }
 #endif

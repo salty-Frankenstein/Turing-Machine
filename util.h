@@ -22,7 +22,7 @@ inline void log(const std::string& msg) {
 }
 
 struct ParseError : public std::exception {
-    ParseError(const std::string& s) {}
+    ParseError(const std::string& s) : info(s) {}
 
     const char* what() const throw () {
         return info.c_str();

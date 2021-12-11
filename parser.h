@@ -27,7 +27,7 @@ public:
     const static Parsec<std::list<Char>> parseTapeSet;
     const static Parsec<std::list<State>> parseFinalStateSet;
     const static Parsec<int> parseTapeNum;
-    const static Parsec<FuncLine> parseFuncLine;
+    static FuncLine parseFuncLine(const std::string& s);
 
 private:
     static bool isEmpty(const std::string& s);

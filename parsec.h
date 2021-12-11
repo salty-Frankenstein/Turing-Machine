@@ -132,6 +132,20 @@ Parsec<std::list<A>> many(const Parsec<A>& p) {
         return makeRes<std::list<A>>(many_(p, str));});
 }
 
+/* many1(p) applies the parser p one or more times.
+ * Returns a list of the returned values of p
+ */
+template<typename A>
+Parsec<std::list<A>> many1(const Parsec<A>& p) {
+    std::function<std::function<std::list<A>(std::list<A>)>(A)> cons =
+        [](const A& a) {
+        return [=](std::list<A> l) {
+            l.push_front(a);
+            return l;
+        };};
+    return pure(cons) * p * many(p);
+}
+
 template<typename A, typename B>
 Parsec<B> operator>>(const Parsec<A>& p1, const Parsec<B>& p2) {
     auto p = pure(std::function<std::function<B(B)>(A)>(

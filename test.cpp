@@ -122,7 +122,7 @@ Test testIR = Test("IR", []() {
         '_',
         { "halt_accept" },
         2,
-        { {"cmp", {'0', '1'}, {'_', '_'}, {RIGHT, LEFT}, "0"} }
+        { {"cmp", {'0', '1'}, {'_', '_'}, {'r', 'l'}, "0"} }
     );
 
     m.print();
@@ -147,11 +147,13 @@ Test testParser = Test("Parser", []() {
     tParse("tape set", p.parseTapeSet, "#G = {0,1,_,t,r,u,e,f,a,l,s}", true);
     tParse("final state set", p.parseFinalStateSet, "#F = {halt_accept}", true);
 
-    tParse("int test1", p.parseTapeNum, "123", true);
-    tParse("int test2", p.parseTapeNum, "123 234", true);
-    tParse("int test3", p.parseTapeNum, "123abcde", true);
-    tParse("int test4", p.parseTapeNum, "hello123", false);
-    
+    tParse("int test1", p.parseTapeNum, "#N = 123", true);
+    tParse("int test2", p.parseTapeNum, "#N = 123 234", true);
+    tParse("int test3", p.parseTapeNum, "#N = 123abcde", true);
+    tParse("int test4", p.parseTapeNum, "#N = hello123", false);
+
+    p.parseFuncLine("cmp 01 __ rl reject").print();
+    p.parseFuncLine("cmp 01 __ xx reject").print();
     });
 
 int main() {

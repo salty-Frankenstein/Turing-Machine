@@ -7,7 +7,7 @@
 using State = std::string;
 using Char = char;
 
-enum Direction { LEFT, RIGHT, STAR };
+using Direction = char;
 
 /* represents a line of the transfer function */
 struct FuncLine {
@@ -17,6 +17,10 @@ struct FuncLine {
         const std::list<Direction>& direction,
         const State& newState
     );
+
+#ifndef NDEBUG
+    void print(); //DEBUG
+#endif
 
     const State oldState;
     const std::list<Char> oldChar;
