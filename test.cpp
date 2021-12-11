@@ -7,6 +7,7 @@
 #include<cassert>
 #include<functional>
 #include<string>
+#include<sstream>
 #include<fstream>
 
 using namespace std;
@@ -28,6 +29,7 @@ private:
     const function<void()> callback;
 };
 
+void print(int x) { cout << x << endl; }
 void print(String x) { cout << show(x) << endl; }
 void print(char x) { cout << x << endl; }
 void print(string x) { cout << x << endl; }
@@ -145,12 +147,30 @@ Test testParser = Test("Parser", []() {
     tParse("tape set", p.parseTapeSet, "#G = {0,1,_,t,r,u,e,f,a,l,s}", true);
     tParse("final state set", p.parseFinalStateSet, "#F = {halt_accept}", true);
 
+    tParse("int test1", p.parseTapeNum, "123", true);
+    tParse("int test2", p.parseTapeNum, "123 234", true);
+    tParse("int test3", p.parseTapeNum, "123abcde", true);
+    tParse("int test4", p.parseTapeNum, "hello123", false);
+    
     });
 
 int main() {
-    testEither();
-    testParsec();
-    testIR();
+    // string s("123");
+    // stringstream ss(s);
+    // int n;
+    // ss >> n;
+    // if (ss.eof() || ss.good()) {
+    //     cout << n << endl;
+    //     string res;
+    //     ss >> res;
+    //     cout << res << endl;
+    // }
+    // else {
+    //     cout << "failed" << endl;
+    // }
+    // testEither();
+    // testParsec();
+    // testIR();
     testParser();
     return 0;
 }

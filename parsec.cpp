@@ -1,18 +1,19 @@
 #include"parsec.h"
+using namespace std;
 
-std::string tostring(const String& s) {
-    return std::string(s.begin(), s.end());
+string tostring(const String& s) {
+    return string(s.begin(), s.end());
 }
 
-std::string show(const String& s){
+string show(const String& s){
     return "\"" + tostring(s) + "\""; 
 }
 
-String toString(const std::string& s) {
+String toString(const string& s) {
     return String(s.begin(), s.end());
 }
 
-Parsec<char> satisfy(const std::function<bool(char)> f, const std::string& info) {
+Parsec<char> satisfy(const function<bool(char)> f, const string& info) {
     return Parsec<char>([=](String s)->ParseRes<char> {
         if (s.empty()) {
             return makeError<char>("Unexpected end of string");
@@ -25,7 +26,7 @@ Parsec<char> satisfy(const std::function<bool(char)> f, const std::string& info)
             return makeRes<char>({ head, res });
         }
         return makeError<char>(
-            std::string("'") + head + "' cannot satisfy the given rule \"" + info + "\"");
+            string("'") + head + "' cannot satisfy the given rule \"" + info + "\"");
         }
     );
 }

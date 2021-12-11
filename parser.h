@@ -3,6 +3,7 @@
 
 #include"parsec.h"
 #include"ir.h"
+#include"util.h"
 #include<string>
 #include<list>
 #include<iostream>
@@ -19,12 +20,14 @@ public:
     static Code preprocess(const Code& code);
 
     /* parse the sourse code into IR */
-    static TuringMachine parse(const Code& code);
+    static TuringMachine parse(Code code);
 
     const static Parsec<std::list<State>> parseStateSet;
     const static Parsec<std::list<Char>> parseInputSet;
     const static Parsec<std::list<Char>> parseTapeSet;
     const static Parsec<std::list<State>> parseFinalStateSet;
+    const static Parsec<int> parseTapeNum;
+    const static Parsec<FuncLine> parseFuncLine;
 
 private:
     static bool isEmpty(const std::string& s);

@@ -1,5 +1,6 @@
 #include"parser.h"
 #include<string>
+#include<sstream>
 using namespace std;
 
 /* 'a'-'z' 'A'-'Z' '0'-'9' and '_' */
@@ -57,7 +58,7 @@ Parsec<list<A>> sepBy(const Parsec<A> p, const Parsec<SEP> sep) {
  */
 template<typename A>
 Parsec<list<A>> parseSet(const string& id, const Parsec<A> parseElem) {
-    return isString(id) >> 
+    return isString(id) >>
         isChar('{') >> sepBy(parseElem, isChar(',')) << isChar('}');
 }
 
@@ -69,6 +70,63 @@ const Parsec<list<Char>> Parser::parseInputSet = parseSet("#S = ", parseChar);
 const Parsec<list<Char>> Parser::parseTapeSet = parseSet("#G = ", parseChar);
 const Parsec<list<State>> Parser::parseFinalStateSet = parseSet("#F = ", parseState);
 
+// TODO: test this
+const Parsec<int> parseInt = Parsec<int>(
+    [](String s)->ParseRes<int> {
+        stringstream ss(tostring(s));
+        int result;
+        string rest;
+        ss >> result;
+        if (ss.eof() || ss.good()) {
+            ss >> rest;
+            return makeRes<int>({ result, toString(rest) });
+        }
+        else {
+            return makeError<int>("Error when parsing " + show(s) +
+                ", an integer expected");
+        }
+    }
+);
+
+const Parsec<int> Parser::parseTapeNum = isString("#N = ") >> parseInt;
+
+/* apply the given parser combinator
+ * and consume the code if succeeded
+ * throw an exception otherwise
+ */
+template<typename A>
+Res<A> applyParsec(const Parsec<A> p, Parser::Code& code) {
+    if (code.empty()) {
+        throw EOF_Error();
+    }
+    auto res = p(code.front());
+    if (res->isRight()) {
+        code.pop_front();
+        return res->getRight();
+    }
+    throw ParseError(res->getLeft());
+}
+
+TuringMachine Parser::parse(Parser::Code code) {
+    try {
+        auto stateSet = applyParsec(parseStateSet, code);
+        auto inputSet = applyParsec(parseInputSet, code);
+        auto tapeSet = applyParsec(parseTapeSet, code);
+        auto initState = applyParsec(isString("#q0 = ") >> parseState, code);
+        auto blank = applyParsec(isString("#B = ") >> parseChar, code);
+        auto finalStateSet = applyParsec(parseFinalStateSet, code);
+        auto tapeNum = applyParsec(parseTapeNum, code);
+        
+    }
+    catch (const EOF_Error& e) {
+        //TODO
+    }
+    catch (const ParseError& e) {
+        std::cerr << e.what() << '\n';
+    }
+
+}
+
 Parser::Code Parser::readFile(istream& is) {
     Parser::Code result;
 
@@ -78,9 +136,6 @@ Parser::Code Parser::readFile(istream& is) {
         result.push_back(s);
     }
     return result;
-}
-
-TuringMachine Parser::parse(const Parser::Code& code) {
 }
 
 bool Parser::isEmpty(const string& s) {
