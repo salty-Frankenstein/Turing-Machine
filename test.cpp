@@ -153,23 +153,19 @@ Test testParser = Test("Parser", []() {
     tParse("int test4", p.parseTapeNum, "#N = hello123", false);
 
     p.parseFuncLine("cmp 01 __ rl reject").print();
-    p.parseFuncLine("cmp 01 __ xx reject").print();
+    // p.parseFuncLine("cmp 01 __ xx reject").print();
+
+    f.close();
+    ifstream f2("input/test2.tm");
+    code = p.readFile(f2);
+    res2 = p.preprocess(code);
+    auto tur = p.parse(res2);
+
+    tur.print();
+
     });
 
 int main() {
-    // string s("123");
-    // stringstream ss(s);
-    // int n;
-    // ss >> n;
-    // if (ss.eof() || ss.good()) {
-    //     cout << n << endl;
-    //     string res;
-    //     ss >> res;
-    //     cout << res << endl;
-    // }
-    // else {
-    //     cout << "failed" << endl;
-    // }
     // testEither();
     // testParsec();
     // testIR();

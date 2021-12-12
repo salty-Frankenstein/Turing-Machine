@@ -24,18 +24,19 @@ const Parsec<int> Parser::parseTapeNum = isString("#N = ") >> parseInt;
 const Parsec<Direction> parseDirection = isChar('l') | isChar('r') | isChar('*');
 
 /* apply the given parser combinator
- * and consume the code if succeeded
+ * retrue the result and consume the code if succeeded
  * throw an exception otherwise
  */
 template<typename A>
-Res<A> applyParsecLn(const Parsec<A> p, Parser::Code& code) {
+A applyParsecLn_(const Parsec<A> p, Parser::Code& code) {
+    // TODO: check if the rest of the string is empty
     if (code.empty()) {
         throw EOF_Error();
     }
     auto res = p(code.front());
     if (res->isRight()) {
         code.pop_front();
-        return res->getRight();
+        return res->getRight().first;
     }
     throw ParseError(res->getLeft());
 }
@@ -46,7 +47,7 @@ Res<A> applyParsecLn(const Parsec<A> p, Parser::Code& code) {
 template<typename A>
 Res<A> applyParsec(const Parsec<A> p, const String& s) {
     auto res = p(s);
-    if (res->isRight()){
+    if (res->isRight()) {
         return res->getRight();
     }
     throw ParseError(res->getLeft());
@@ -70,20 +71,28 @@ FuncLine Parser::parseFuncLine(const string& s) {
 
 TuringMachine Parser::parse(Parser::Code code) {
     try {
-        auto stateSet = applyParsecLn(parseStateSet, code);
-        auto inputSet = applyParsecLn(parseInputSet, code);
-        auto tapeSet = applyParsecLn(parseTapeSet, code);
-        auto initState = applyParsecLn(isString("#q0 = ") >> parseState, code);
-        auto blank = applyParsecLn(isString("#B = ") >> parseChar, code);
-        auto finalStateSet = applyParsecLn(parseFinalStateSet, code);
-        auto tapeNum = applyParsecLn(parseTapeNum, code);
-        
+        auto stateSet = applyParsecLn_(parseStateSet, code);
+        auto inputSet = applyParsecLn_(parseInputSet, code);
+        auto tapeSet = applyParsecLn_(parseTapeSet, code);
+        auto initState = applyParsecLn_(isString("#q0 = ") >> parseState, code);
+        auto blank = applyParsecLn_(isString("#B = ") >> parseChar, code);
+        auto finalStateSet = applyParsecLn_(parseFinalStateSet, code);
+        auto tapeNum = applyParsecLn_(parseTapeNum, code);
+        list<FuncLine> func;
+        while (!code.empty()) {
+            func.push_back(parseFuncLine(code.front()));
+            code.pop_front();
+        }
+        return { stateSet, inputSet, tapeSet, initState, blank, finalStateSet, tapeNum, func };
     }
     catch (const EOF_Error& e) {
+        log("here");
+        exit(-1);
         //TODO
     }
     catch (const ParseError& e) {
         std::cerr << e.what() << '\n';
+        exit(-1);
         // TODO 
     }
 
