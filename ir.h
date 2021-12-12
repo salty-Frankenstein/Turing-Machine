@@ -18,6 +18,9 @@ struct FuncLine {
         const State& newState
     );
 
+    /* check is the function is well-formed under the tape num 'n' */
+    bool isWellFormed(int n) const;
+
 #ifndef NDEBUG
     void print(); //DEBUG
 #endif
@@ -41,6 +44,9 @@ public:
         const int& tapeNum,
         const std::list<FuncLine>& function
     );
+
+    /* checking is the machine is well-formed */
+    bool isWellFormed() const;
 
 #ifndef NDEBUG
     void print(); //DEBUG

@@ -84,7 +84,13 @@ TuringMachine Parser::parse(Parser::Code code) {
             func.push_back(parseFuncLine(code.front()));
             code.pop_front();
         }
-        return { stateSet, inputSet, tapeSet, initState, blank, finalStateSet, tapeNum, func };
+        TuringMachine res = {
+            stateSet, inputSet, tapeSet, initState, blank, finalStateSet, tapeNum, func
+        };
+        if(res.isWellFormed()){
+            return res;
+        }
+        // TODO: handling
     }
     catch (const EOF_Error& e) {
         log("here");
@@ -120,6 +126,7 @@ bool Parser::isEmpty(const string& s) {
 }
 
 Parser::Code Parser::preprocess(const Parser::Code& code) {
+    // TODO: code line ordering
     auto parseLine
         = many(notChar(';')) << isChar(';') << many(allChar)
         | many(notChar(';'));
@@ -140,7 +147,7 @@ Parser::Code Parser::preprocess(const Parser::Code& code) {
 
 void Parser::dump(const Code& code, const std::string& path) {
     ofstream out(path);
-    for(auto i : code) {
+    for (auto i : code) {
         out << i << endl;
     }
     out.close();

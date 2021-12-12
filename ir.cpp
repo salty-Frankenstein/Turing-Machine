@@ -1,6 +1,7 @@
 /* intermediate representation */
 #include"ir.h"
 #include<iostream>
+#include<numeric>
 using namespace std;
 
 
@@ -15,6 +16,12 @@ FuncLine::FuncLine(const State& _oldState,
     newChar(_newChar),
     direction(_direction),
     newState(_newState) {
+}
+
+bool FuncLine::isWellFormed(int n) const {
+    return oldChar.size() == n 
+        && newChar.size() == n
+        && direction.size() == n;
 }
 
 TuringMachine::TuringMachine(
@@ -35,6 +42,13 @@ TuringMachine::TuringMachine(
     finalStateSet(_finalStateSet),
     tapeNum(_tapeNum),
     function(_function) {
+}
+
+bool TuringMachine::isWellFormed() const {
+    int n = tapeNum;
+    return accumulate(function.begin(), function.end(), true,
+    [=](bool a, const FuncLine& b){ 
+        return a && b.isWellFormed(n); });
 }
 
 #ifndef NDEBUG
@@ -59,7 +73,9 @@ void TuringMachine::print() {
     cout << "Blank character: " << blank << endl;
     printList("Final state set", finalStateSet);
     cout << "Tape num: " << tapeNum << endl;
-
+    for (auto i : function) {
+        i.print();
+    }
 }
 
 void FuncLine::print() {
