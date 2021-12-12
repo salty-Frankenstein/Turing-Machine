@@ -1,4 +1,4 @@
-/*  HACK: this header is used in "parser.cpp" *ONLY* 
+/*  HACK: this header is used in "parser.cpp" *ONLY*
  * definition of several common parser combinitors
  */
 #ifndef COMBINATOR_H
@@ -9,20 +9,32 @@
 #include<list>
 #include<sstream>
 
-/* 'a'-'z' 'A'-'Z' '0'-'9' and '_' */
+ /* 'a'-'z' 'A'-'Z' '0'-'9' and '_' */
 const auto nonBlank = satisfy([](char c) {
     return (c >= 'a' && c <= 'z')
         || (c >= 'A' && c <= 'Z')
         || (c >= '0' && c <= '9')
         || c == '_';}, "non-blank");
 
-/* printable ascii, expect ' ', ',', ';', '{', '}', '*' */
-const auto printable = satisfy([](char c) {
-    return c >= 32 && c <= 127
+const auto _printable = [](char c) {
+    return c >= 32 && c <= 127;
+};
+
+/* printable ascii, expect ' ', ',', ';', '{', '}' */
+const auto _printableEx = [](char c) {
+    return  _printable(c)
         && c != ' ' && c != ','
         && c != ';' && c != '{'
-        && c != '}' && c != '*';}, 
-    "printable except ' ', ',', ';', '{', '}', '*' ");
+        && c != '}';
+};
+
+const auto printable = satisfy([](char c) {
+    return _printable(c); },
+    "printable");
+
+const auto printableExNoWild = satisfy([](char c) {
+    return _printableEx(c); },
+    "printable except ' ', ',', ';', '{', '}'");
 
 /* all characters */
 const auto allChar = satisfy([](char _) {return true;}, "all char");

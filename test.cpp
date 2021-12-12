@@ -159,6 +159,7 @@ Test testParser = Test("Parser", []() {
     ifstream f2("input/test2.tm");
     code = p.readFile(f2);
     res2 = p.preprocess(code);
+    p.dump(res2, "input/dump.tm");
     auto tur = p.parse(res2);
 
     tur.print();

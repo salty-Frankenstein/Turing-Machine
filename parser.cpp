@@ -1,6 +1,7 @@
 #include"parser.h"
 #include"combinator.h"
 #include<string>
+#include<fstream>
 using namespace std;
 
 /* parse set with given set identifier
@@ -13,7 +14,7 @@ Parsec<list<A>> parseSet(const string& id, const Parsec<A> parseElem) {
 }
 
 const auto parseState = pure(function<string(String)>(tostring)) * many1(nonBlank);
-const auto parseChar = printable;
+const auto parseChar = printableExNoWild;
 
 const Parsec<list<State>> Parser::parseStateSet = parseSet("#Q = ", parseState);
 const Parsec<list<Char>> Parser::parseInputSet = parseSet("#S = ", parseChar);
@@ -134,3 +135,15 @@ Parser::Code Parser::preprocess(const Parser::Code& code) {
     }
     return result;
 }
+
+#ifndef NDEBUG
+
+void Parser::dump(const Code& code, const std::string& path) {
+    ofstream out(path);
+    for(auto i : code) {
+        out << i << endl;
+    }
+    out.close();
+}
+
+#endif

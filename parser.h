@@ -22,6 +22,11 @@ public:
     /* parse the sourse code into IR */
     static TuringMachine parse(Code code);
 
+#ifndef NDEBUG
+    /* dump the code to the path */
+    static void dump(const Code& code, const std::string& path);
+#endif
+
     const static Parsec<std::list<State>> parseStateSet;
     const static Parsec<std::list<Char>> parseInputSet;
     const static Parsec<std::list<Char>> parseTapeSet;
