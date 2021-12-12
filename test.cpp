@@ -2,6 +2,7 @@
 #include"either.h"
 #include"parsec.h"
 #include"parser.h"
+#include"interpreter.h"
 #include"util.h"
 #include"ir.h"
 #include<cassert>
@@ -156,14 +157,20 @@ Test testParser = Test("Parser", []() {
     // p.parseFuncLine("cmp 01 __ xx reject").print();
 
     f.close();
+    });
+
+Test testInterpreter = Test("Interpreter", []() {
+    Parser p;
     ifstream f2("input/test2.tm");
-    code = p.readFile(f2);
-    res2 = p.preprocess(code);
+    auto code = p.readFile(f2);
+    auto res2 = p.preprocess(code);
     p.dump(res2, "input/dump.tm");
     auto tur = p.parse(res2);
 
     tur.print();
 
+    Interpreter it(tur);
+    it.execute("01x010k1");
     });
 
 int main() {
@@ -171,5 +178,6 @@ int main() {
     // testParsec();
     // testIR();
     testParser();
+    testInterpreter();
     return 0;
 }

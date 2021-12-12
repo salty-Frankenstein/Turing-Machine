@@ -73,9 +73,9 @@ void TuringMachine::print() {
     cout << "Blank character: " << blank << endl;
     printList("Final state set", finalStateSet);
     cout << "Tape num: " << tapeNum << endl;
-    for (auto i : function) {
-        i.print();
-    }
+    // for (auto i : function) {
+    //     i.print();
+    // }
 }
 
 void FuncLine::print() {

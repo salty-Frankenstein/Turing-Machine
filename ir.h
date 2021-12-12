@@ -18,7 +18,7 @@ struct FuncLine {
         const State& newState
     );
 
-    /* check is the function is well-formed under the tape num 'n' */
+    /* check if the function is well-formed under the tape num 'n' */
     bool isWellFormed(int n) const;
 
 #ifndef NDEBUG
@@ -32,8 +32,7 @@ struct FuncLine {
     const State newState;
 };
 
-class TuringMachine {
-public:
+struct TuringMachine {
     TuringMachine(
         const std::list<State>& stateSet,
         const std::list<Char>& inputSet,
@@ -45,14 +44,13 @@ public:
         const std::list<FuncLine>& function
     );
 
-    /* checking is the machine is well-formed */
+    /* checking if the machine is well-formed */
     bool isWellFormed() const;
 
 #ifndef NDEBUG
     void print(); //DEBUG
 #endif
 
-private:
     const std::list<State> stateSet;
     const std::list<Char> inputSet;
     const std::list<Char> tapeSet;
