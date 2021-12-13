@@ -55,17 +55,33 @@ void Tape::moveHead(Direction d) {
 
 Tape::TapeRep Tape::showTape() {
     TapeRep res;
-    for (int i = neg.size(); i >= 1; i--) {
-        res.push_back({ -i, neg[i - 1] });
+    if (neg.size() == 0) {
+        int k = 0;
+        while (pos[k] == '_') { k++; }
+        for (int i = min(k, head); i < pos.size(); i++) {
+            res.push_back({ i, pos[i] });
+        }
     }
-    for (int i = 0; i < pos.size(); i++) {
-        res.push_back({ i, pos[i] });
+    else if (pos.size() == 0) {
+        int k = 1;
+        while (neg[k - 1] == '_') { k++; }
+        for (int i = neg.size(); i >= min(abs(head), k); i--) {
+            res.push_back({ -i, neg[i - 1] });
+        }
+    }
+    else {
+        for (int i = neg.size(); i >= 1; i--) {
+            res.push_back({ -i, neg[i - 1] });
+        }
+        for (int i = 0; i < pos.size(); i++) {
+            res.push_back({ i, pos[i] });
+        }
     }
     return res;
 }
 
 Interpreter::Interpreter(const TuringMachine& _tm)
-    : tm(_tm), step(0), halt(false) {
+    : tm(_tm), tapes(_tm.tapeNum), state(_tm.initState), step(0), halt(false) {
     assert(tm.isWellFormed());
 }
 
@@ -73,7 +89,6 @@ void Interpreter::printState(ostream& os) {
     os << "Step\t: " << step << endl;
     for (int i = 0; i < tm.tapeNum; i++) {
         auto show = tapes[i].showTape();
-
         // print index
         os << "Index" << i << "\t: ";
         for (auto p : show) {
@@ -107,6 +122,30 @@ void Interpreter::printState(ostream& os) {
 void Interpreter::execute(const string& s) {
     try {
         checkLegal(s);
+        initTape(s);
+        if (Mode::getMode() == VERBOSE) {
+            cout << "Input: " << s << endl;
+            cout << "==================== RUN ====================\n";
+            printState(cout);
+            while (!halt && !inSet(state, tm.finalStateSet)) {
+                cout << "---------------------------------------------\n";
+                singleStep();
+                printState(cout);
+                // int x;
+                // cin >> x;
+            }
+        }
+        else {
+            while(!halt && !inSet(state, tm.finalStateSet)){
+                singleStep();
+            }
+            auto res = tapes[0].showTape();
+            for(auto p : res){
+                cout << p.second;
+            }
+            cout << endl;
+        }
+
     }
     catch (const IllegalError& e) {
         string err;
@@ -152,9 +191,14 @@ void Interpreter::singleStep() {
 void Interpreter::transfer() {
     for (auto fl : tm.function) {
         if (match(fl)) {
+            // log("applied:");
+            // fl.print();
+            // log("\\applied");
             for (int i = 0; i < tm.tapeNum; i++) {
                 // assign new tape characters
-                tapes[i].access() = fl.newChar[i];
+                if (fl.newChar[i] != '*') { // wildcast
+                    tapes[i].access() = fl.newChar[i];
+                }
                 // move the heads
                 tapes[i].moveHead(fl.direction[i]);
             }
@@ -171,11 +215,11 @@ bool Interpreter::match(const FuncLine& fl) {
         return false;
     }
     for (int i = 0; i < tm.tapeNum; i++) {
-        if (match(fl.oldChar[i], tapes[i].access())) {
-            return true;
+        if (!match(tapes[i].access(), fl.oldChar[i])) {
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 bool Interpreter::match(Char c, Char pattern) {

@@ -32,6 +32,8 @@ private:
     bool check();
 
     int head;
+    
+    // represents a tape with two stacks
     std::vector<Char> pos;
     std::vector<Char> neg;
 };

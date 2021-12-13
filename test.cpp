@@ -161,25 +161,27 @@ Test testParser = Test("Parser", []() {
 
 Test testTape = Test("Tape", []() {
     Tape t;
+    t.print(cout);
+
     for (auto c : string("hello,world!!!")) {
+        t.moveHead('l');
         t.access() = c;
+    }
+    t.moveHead('r');
+    t.moveHead('r');
+    t.print(cout);
+    for (int i = 1; i <= 11; i++) {
         t.moveHead('r');
     }
-    t.moveHead('r');
-    t.moveHead('r');
-    t.print(cout);
-    t.moveHead('l');
-    for(int i = 1; i <= 15; i++){
-        t.moveHead('l');
-    }
     t.print(cout);
 
+    t.access() = '_';
     t.moveHead('l');
-    t.moveHead('l');
+    t.access() = '_';
     t.moveHead('l');
     t.print(cout);
 
-    for(int i = 1; i <= 15; i++){
+    for (int i = 1; i <= 15; i++) {
         t.moveHead('r');
     }
     t.print(cout);
@@ -197,7 +199,11 @@ Test testInterpreter = Test("Interpreter", []() {
     tur.print();
 
     Interpreter it(tur);
-    it.execute("01x010k1");
+    // it.execute("01x010k1");
+    // log("start execute 1");
+    // it.execute("010101");
+    log("start execute 2");
+    it.execute("0101010");
     });
 
 int main() {
@@ -206,6 +212,6 @@ int main() {
     // testIR();
     // testParser();
     testTape();
-    // testInterpreter();
+    testInterpreter();
     return 0;
 }
