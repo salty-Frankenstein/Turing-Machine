@@ -12,9 +12,9 @@ FuncLine::FuncLine(const State& _oldState,
     const State& _newState
 ) :
     oldState(_oldState),
-    oldChar(_oldChar),
-    newChar(_newChar),
-    direction(_direction),
+    oldChar(_oldChar.begin(), _oldChar.end()),
+    newChar(_newChar.begin(), _newChar.end()),
+    direction(_direction.begin(), _direction.end()),
     newState(_newState) {
 }
 
@@ -53,7 +53,7 @@ bool TuringMachine::isWellFormed() const {
 
 #ifndef NDEBUG
 template<typename T>
-void printList(string name, list<T> l) {
+void printList(string name, T l) {
     cout << name + ": {";
     auto last = l.end();
     last--;

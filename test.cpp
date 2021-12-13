@@ -159,6 +159,33 @@ Test testParser = Test("Parser", []() {
     f.close();
     });
 
+Test testTape = Test("Tape", []() {
+    Tape t;
+    for (auto c : string("hello,world!!!")) {
+        t.access() = c;
+        t.moveHead('r');
+    }
+    t.moveHead('r');
+    t.moveHead('r');
+    t.print(cout);
+    t.moveHead('l');
+    for(int i = 1; i <= 15; i++){
+        t.moveHead('l');
+    }
+    t.print(cout);
+
+    t.moveHead('l');
+    t.moveHead('l');
+    t.moveHead('l');
+    t.print(cout);
+
+    for(int i = 1; i <= 15; i++){
+        t.moveHead('r');
+    }
+    t.print(cout);
+
+    });
+
 Test testInterpreter = Test("Interpreter", []() {
     Parser p;
     ifstream f2("input/test2.tm");
@@ -177,7 +204,8 @@ int main() {
     // testEither();
     // testParsec();
     // testIR();
-    testParser();
-    testInterpreter();
+    // testParser();
+    testTape();
+    // testInterpreter();
     return 0;
 }

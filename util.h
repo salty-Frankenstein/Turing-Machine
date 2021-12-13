@@ -7,6 +7,7 @@
 #include<exception>
 #include<algorithm>
 #include<list>
+#include<vector>
 
 inline void panic(const std::string& msg) {
 #ifndef NDEBUG
@@ -28,10 +29,29 @@ inline void error(const std::string& msg, int exitCode) {
     exit(exitCode);
 }
 
+/* return the digit number of an integer */
+inline int digitNum(int i) {
+    assert(i >= 0);
+    int res = 1;
+    while(i >= 10) {
+        i /= 10;
+        res++;
+    }
+    return res;
+}
+
 /* check if the element is in the given set */
 template<typename A>
-static bool inSet(const A& elem, const std::list<A>& s) {
+bool inSet(const A& elem, const std::list<A>& s) {
     return find(s.begin(), s.end(), elem) != s.end();
+}
+
+template<typename A>
+A& access(std::vector<A>& v, int i) {
+    if (i < v.size()) {
+        return v[i];
+    }
+    panic("error accessing vector");
 }
 
 struct ParseError : public std::exception {

@@ -2,6 +2,7 @@
 #define IR_H
 
 #include<list>
+#include<vector>
 #include<string>
 
 using State = std::string;
@@ -26,9 +27,9 @@ struct FuncLine {
 #endif
 
     const State oldState;
-    const std::list<Char> oldChar;
-    const std::list<Char> newChar;
-    const std::list<Direction> direction;
+    const std::vector<Char> oldChar;
+    const std::vector<Char> newChar;
+    const std::vector<Direction> direction;
     const State newState;
 };
 
