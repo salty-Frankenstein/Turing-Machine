@@ -223,7 +223,7 @@ bool Interpreter::match(const FuncLine& fl) {
 }
 
 bool Interpreter::match(Char c, Char pattern) {
-    if (pattern == '*') {    // wild cast
+    if (pattern == '*') {    // wildcard
         return true;
     }
     return c == pattern;
