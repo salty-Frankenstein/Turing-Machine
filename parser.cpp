@@ -79,15 +79,18 @@ TuringMachine Parser::parse(Parser::Code code) {
         auto blank = applyParsecLn_(isString("#B = ") >> parseChar, code);
         auto finalStateSet = applyParsecLn_(parseFinalStateSet, code);
         auto tapeNum = applyParsecLn_(parseTapeNum, code);
+        // TODO: handling tapeNum <= 0
+        assert(tapeNum > 0);
         list<FuncLine> func;
         while (!code.empty()) {
             func.push_back(parseFuncLine(code.front()));
             code.pop_front();
         }
         TuringMachine res = {
-            stateSet, inputSet, tapeSet, initState, blank, finalStateSet, tapeNum, func
+            stateSet, inputSet, tapeSet, initState, blank,
+            finalStateSet, static_cast<size_t>(tapeNum), func
         };
-        if(res.isWellFormed()){
+        if (res.isWellFormed()) {
             return res;
         }
         // TODO: handling
@@ -116,19 +119,9 @@ Parser::Code Parser::readFile(istream& is) {
     return result;
 }
 
-bool Parser::isEmpty(const string& s) {
-    for (auto c : s) {
-        if (c != ' ' && c != '\t' && c != '\n') {
-            return false;
-        }
-    }
-    return true;
-}
-
 Parser::Code Parser::preprocess(const Parser::Code& code) {
-    // TODO: code line ordering
     auto parseLine
-        = many(notChar(';')) << isChar(';') << many(allChar)
+        = many(notChar(';')) << isChar(';') << many(anyChar)
         | many(notChar(';'));
     Parser::Code result;
 
@@ -136,10 +129,37 @@ Parser::Code Parser::preprocess(const Parser::Code& code) {
         auto res = parseLine(line);
         assert(res->isRight());     // this parsec shall parse all strings
         auto newLine = tostring(res->getRight().first);
-        if (!isEmpty(newLine)) {
+
+        // remove spaces at the end of line
+        while (!newLine.empty() && isSpace(newLine.back())) {
+            newLine.pop_back();
+        }
+
+        // remove empty lines
+        if (!newLine.empty()) {
             result.push_back(newLine);
         }
     }
+
+    auto toOrd = [](const string& s) {
+        if (s.length() < 2) {
+            return 8;
+        }
+        char c = s[1];
+        switch (c) {
+        case 'Q': return 0;
+        case 'S': return 1;
+        case 'G': return 2;
+        case 'q': return 3;
+        case 'B': return 4;
+        case 'F': return 5;
+        case 'N': return 6;
+        default: return 7;
+        }
+    };
+
+    // sort all lines
+    result.sort([&](string& a, string& b) { return toOrd(a) < toOrd(b); });
     return result;
 }
 

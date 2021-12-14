@@ -16,7 +16,11 @@ public:
     /* read code file from istream  */
     static Code readFile(std::istream& is);
 
-    /* removing all comments and empty lines */
+    /* Spec: 
+     * > remove all comments and empty lines 
+     * > remove all space characters at the end of each lines
+     * > sort all lines to the normal order
+     */
     static Code preprocess(const Code& code);
 
     /* parse the sourse code into IR */
@@ -34,8 +38,6 @@ public:
     const static Parsec<int> parseTapeNum;
     static FuncLine parseFuncLine(const std::string& s);
 
-private:
-    static bool isEmpty(const std::string& s);
 };
 
 #endif

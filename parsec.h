@@ -100,11 +100,11 @@ Parsec<B> operator*(const Parsec<std::function<B(A)>>& pf, const Parsec<A>& p) {
                 auto res2 = t2->getRight();
                 return makeRes<B>({ f(res2.first), res2.second });
             }
-            assert(t2->isLeft());//TODO: assertion
+            assert(t2->isLeft());
             return makeError<B>(showError(t2) +
                 ",\nwhen parsing " + show(str2) + ", trying to parse: " + show(str));
         }
-        assert(t1->isLeft());//TODO: assertion
+        assert(t1->isLeft());
         return makeError<B>(showError(t1) + ",\nwhen parsing " + show(str));
         }
     );

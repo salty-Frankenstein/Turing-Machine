@@ -131,7 +131,7 @@ Test testIR = Test("IR", []() {
 
 Test testParser = Test("Parser", []() {
     Parser p;
-    auto res = p.preprocess({ "abcd", "abc;d", " ;cd;e", " ;" });
+    auto res = p.preprocess({ "abcd \t ", "abc  ;d", " ;cd;e", " ;" });
     assert(res.front() == "abcd"); res.pop_front();
     assert(res.front() == "abc"); res.pop_front();
     assert(res.empty());
@@ -210,7 +210,7 @@ int main() {
     // testEither();
     // testParsec();
     // testIR();
-    // testParser();
+    testParser();
     testTape();
     testInterpreter();
     return 0;

@@ -2,8 +2,8 @@
 #include"ir.h"
 #include<iostream>
 #include<numeric>
+#include<algorithm>
 using namespace std;
-
 
 FuncLine::FuncLine(const State& _oldState,
     const std::list<Char>& _oldChar,
@@ -18,10 +18,15 @@ FuncLine::FuncLine(const State& _oldState,
     newState(_newState) {
 }
 
-bool FuncLine::isWellFormed(int n) const {
-    return oldChar.size() == n 
+bool FuncLine::isWellFormed(size_t n) const {
+    return oldChar.size() == n
         && newChar.size() == n
         && direction.size() == n;
+}
+
+bool FuncLine::operator<(const FuncLine& f) {
+    return count(oldChar.begin(), oldChar.end(), '*')
+        < count(f.oldChar.begin(), f.oldChar.end(), '*');
 }
 
 TuringMachine::TuringMachine(
@@ -31,7 +36,7 @@ TuringMachine::TuringMachine(
     const State& _initState,
     const Char& _blank,
     const std::list<State>& _finalStateSet,
-    const int& _tapeNum,
+    const size_t& _tapeNum,
     const std::list<FuncLine>& _function
 ) :
     stateSet(_stateSet),
@@ -47,8 +52,13 @@ TuringMachine::TuringMachine(
 bool TuringMachine::isWellFormed() const {
     int n = tapeNum;
     return accumulate(function.begin(), function.end(), true,
-    [=](bool a, const FuncLine& b){ 
-        return a && b.isWellFormed(n); });
+        [=](bool a, const FuncLine& b) {
+            return a && b.isWellFormed(n); });
+}
+
+list<FuncLine> TuringMachine::sort(list<FuncLine> function) {
+    function.sort();
+    return function;
 }
 
 #ifndef NDEBUG

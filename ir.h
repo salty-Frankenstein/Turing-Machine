@@ -20,7 +20,10 @@ struct FuncLine {
     );
 
     /* check if the function is well-formed under the tape num 'n' */
-    bool isWellFormed(int n) const;
+    bool isWellFormed(size_t n) const;
+
+    /* order of the pattern of the function, for sorting */
+    bool operator<(const FuncLine& f);
 
 #ifndef NDEBUG
     void print(); //DEBUG
@@ -33,6 +36,9 @@ struct FuncLine {
     const State newState;
 };
 
+     /* Spec:
+     * > all patterns of every function line is sorted
+     */
 struct TuringMachine {
     TuringMachine(
         const std::list<State>& stateSet,
@@ -41,7 +47,7 @@ struct TuringMachine {
         const State& initState,
         const Char& blank,
         const std::list<State>& finalStateSet,
-        const int& tapeNum,
+        const size_t& tapeNum,
         const std::list<FuncLine>& function
     );
 
@@ -58,8 +64,11 @@ struct TuringMachine {
     const State initState;
     const Char blank;
     const std::list<State> finalStateSet;
-    const int tapeNum;
+    const size_t tapeNum;
     const std::list<FuncLine> function;
+    
+private:
+    std::list<FuncLine> sort(std::list<FuncLine> function);
 };
 
 

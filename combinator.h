@@ -36,8 +36,14 @@ const auto printableExNoWild = satisfy([](char c) {
     return _printableEx(c); },
     "printable except ' ', ',', ';', '{', '}'");
 
-/* all characters */
-const auto allChar = satisfy([](char _) {return true;}, "all char");
+const auto isSpace = [](char c) {
+    return c == ' ' || c == '\t'
+        || c == '\n' || c == '\r'
+        || c == '\f' || c == '\v';
+};
+
+/* match any character */
+const auto anyChar = satisfy([](char _) {return true;}, "any char");
 
 Parsec<char> isChar(char _c) {
     return satisfy([=](char c) {return c == _c;},
