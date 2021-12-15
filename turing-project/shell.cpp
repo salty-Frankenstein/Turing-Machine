@@ -49,7 +49,7 @@ void Shell::runTuring(const string& filePath, const string& input) {
     Parser p;
     auto pcode = p.preprocess(p.readFile(f));
 #ifndef NDEBUG
-    p.dump(pcode, "input/pdump.tm");
+    p.dump(pcode, "../input/pdump.tm");
 #endif
     Interpreter it(p.parse(pcode));
     it.execute(input);

@@ -136,7 +136,7 @@ Test testParser = Test("Parser", []() {
     assert(res.front() == "abc"); res.pop_front();
     assert(res.empty());
 
-    ifstream f("input/test.tm");
+    ifstream f("../input/test.tm");
     auto code = p.readFile(f);
     auto res2 = p.preprocess(code);
     for (auto i : res2) {
@@ -190,10 +190,10 @@ Test testTape = Test("Tape", []() {
 
 Test testInterpreter = Test("Interpreter", []() {
     Parser p;
-    ifstream f2("input/test2.tm");
+    ifstream f2("../input/test2.tm");
     auto code = p.readFile(f2);
     auto res2 = p.preprocess(code);
-    p.dump(res2, "input/dump.tm");
+    p.dump(res2, "../input/dump.tm");
     auto tur = p.parse(res2);
 
     tur.print();

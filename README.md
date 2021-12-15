@@ -4,8 +4,8 @@ A Multi-tape Turing Machine simulator, course project for **Formal Language and 
 ## Features
 ### Frontend
 - Applicative parser combinator
-  - implemented `Applicative` and `Alternative`: `pure`, `<*>`, (`<$>`), `*>`, `<*`, `<|>`.
-  - basic combinators: `safisty`, `many`, `many1`, `sepBy` and more.
+  - `Applicative` and `Alternative` implemented: `pure`, `<*>`, (`<$>`), `*>`, `<*`, `<|>`.
+  - Basic combinators: `safisty`, `many`, `many1`, `sepBy` and more.
 - Preprocessor
   - Normalization
 - Error handling 
