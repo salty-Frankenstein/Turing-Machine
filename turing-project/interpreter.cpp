@@ -80,6 +80,21 @@ Tape::TapeRep Tape::showTape() {
     return res;
 }
 
+string Tape::showResult() {
+    auto s = showTape();
+    list<char> res;
+    for (auto i : s) {
+        res.push_back(i.second);
+    }
+    while (!res.empty() && res.front() == '_') {
+        res.pop_front();
+    }
+    while (!res.empty() && res.back() == '_') {
+        res.pop_back();
+    }
+    return string(res.begin(), res.end());
+}
+
 Interpreter::Interpreter(const TuringMachine& _tm)
     : tm(_tm), tapes(_tm.tapeNum), state(_tm.initState), step(0), halt(false) {
     assert(tm.isWellFormed());
@@ -133,17 +148,16 @@ void Interpreter::execute(const string& s) {
                 printState(cout);
                 // int x;
                 // cin >> x;
+#ifndef NDEBUG 
+                system("sleep 0.1");
+#endif
             }
         }
         else {
-            while(!halt && !inSet(state, tm.finalStateSet)){
+            while (!halt && !inSet(state, tm.finalStateSet)) {
                 singleStep();
             }
-            auto res = tapes[0].showTape();
-            for(auto p : res){
-                cout << p.second;
-            }
-            cout << endl;
+            cout << tapes[0].showResult() << endl;
         }
 
     }

@@ -1,4 +1,4 @@
-DEBUG ?= 1
+DEBUG ?= 0
 ifeq ($(DEBUG), 1)
     CXXFLAGS =-D DEBUG -Wall	# DEBUG 
 else
@@ -7,8 +7,8 @@ endif
 
 OBJS = config.o parsec.o ir.o parser.o interpreter.o shell.o
 
-main:${OBJS} main.cpp
-	g++ main.cpp ${OBJS} -o main 
+turing:${OBJS} main.cpp
+	g++ main.cpp ${OBJS} -o turing
 
 runtest:test
 	./test
@@ -37,4 +37,4 @@ config:config.cpp
 clean:
 	rm -f ${OBJS}
 	rm -f test
-	rm -f main
+	rm -f turing

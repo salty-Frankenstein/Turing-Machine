@@ -94,6 +94,9 @@ TuringMachine Parser::parse(Parser::Code code) {
             return res;
         }
         // TODO: handling
+        else {
+            error("ill-formed", -1);
+        }
     }
     catch (const EOF_Error& e) {
         log("here");
@@ -145,6 +148,7 @@ Parser::Code Parser::preprocess(const Parser::Code& code) {
         if (s.length() < 2) {
             return 8;
         }
+        if(s[0] != '#') return 7;
         char c = s[1];
         switch (c) {
         case 'Q': return 0;

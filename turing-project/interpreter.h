@@ -25,7 +25,11 @@ public:
     /* move the head with the given direction */
     void moveHead(Direction d);
 
+    /* show Tape state, for verbose mode */
     TapeRep showTape();
+
+    /* show result of the tape, for normal mode */
+    std::string showResult();
 
 private:
     /* check if the pointer pointes to a legal position */

@@ -1,5 +1,5 @@
 *.o
 test
-main
+turing-project/turing
 input
 .*
