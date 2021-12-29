@@ -107,6 +107,13 @@ TuringMachine Parser::parse(Parser::Code code) {
         }
         exit(1);
     }
+    catch (const KeyError& e) {
+        cerr << "ill-formed error" << endl;
+        if(Mode::getMode() == VERBOSE) {
+            cerr << e.what() << endl;
+        }
+        exit(1);
+    }
 
 }
 

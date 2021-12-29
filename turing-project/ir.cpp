@@ -66,6 +66,15 @@ TuringMachine::TuringMachine(
 
 void TuringMachine::checkWellFormed() const {
     int n = tapeNum;
+    if (!inSet(initState, stateSet)) {
+        throw KeyError("the initial state \"" + initState + "\" is not in the state set");
+    }
+    for (auto s : finalStateSet) {
+        if (!inSet(s, stateSet)) {
+            throw KeyError("the final state \"" + s + "\" is not in the state set");
+        }
+    }
+    // check function 
     for (auto f : function) {
         if (!f.isWellFormed(n)) {
             throw IllFormedError(

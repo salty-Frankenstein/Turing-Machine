@@ -55,7 +55,7 @@ struct TuringMachine {
     );
 
     /* checking if the machine is well-formed, 
-     * throw an IllFormedError if not */
+     * throw an IllFormedError, or a KeyError if not */
     void checkWellFormed() const;
 
 #ifndef NDEBUG
