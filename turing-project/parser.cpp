@@ -1,5 +1,6 @@
 #include"parser.h"
 #include"combinator.h"
+#include"config.h"
 #include<string>
 #include<fstream>
 using namespace std;
@@ -55,19 +56,12 @@ Res<A> applyParsec(const Parsec<A> p, const String& s) {
 }
 
 FuncLine Parser::parseFuncLine(const string& s) {
-    try {
-        auto oldState = applyParsec(parseState << isChar(' '), toString(s));
-        auto oldChar = applyParsec(many1(parseChar) << isChar(' '), oldState.second);
-        auto newChar = applyParsec(many1(parseChar) << isChar(' '), oldChar.second);
-        auto direction = applyParsec(many1(parseDirection) << isChar(' '), newChar.second);
-        auto newState = applyParsec(parseState, direction.second);
-        return { oldState.first, oldChar.first, newChar.first, direction.first, newState.first };
-    }
-    catch (const ParseError& e) {
-        std::cerr << e.what() << '\n';
-        exit(-1);
-        // TODO: error handling
-    }
+    auto oldState = applyParsec(parseState << isChar(' '), toString(s));
+    auto oldChar = applyParsec(many1(parseChar) << isChar(' '), oldState.second);
+    auto newChar = applyParsec(many1(parseChar) << isChar(' '), oldChar.second);
+    auto direction = applyParsec(many1(parseDirection) << isChar(' '), newChar.second);
+    auto newState = applyParsec(parseState, direction.second);
+    return { oldState.first, oldChar.first, newChar.first, direction.first, newState.first };
 }
 
 TuringMachine Parser::parse(Parser::Code code) {
@@ -90,23 +84,28 @@ TuringMachine Parser::parse(Parser::Code code) {
             stateSet, inputSet, tapeSet, initState, blank,
             finalStateSet, static_cast<size_t>(tapeNum), func
         };
-        if (res.isWellFormed()) {
-            return res;
-        }
-        // TODO: handling
-        else {
-            error("ill-formed", -1);
-        }
+        res.checkWellFormed();
+        return res;
     }
     catch (const EOF_Error& e) {
         log("here");
-        exit(-1);
+        exit(1);
         //TODO
     }
     catch (const ParseError& e) {
-        std::cerr << e.what() << '\n';
-        exit(-1);
-        // TODO 
+        cerr << "syntax error" << endl;
+        if(Mode::getMode() == VERBOSE){
+            cerr << e.what() << endl;
+        }
+        exit(1);
+    }
+    catch (const IllFormedError& e) {
+        cerr << "ill-formed error" << endl;
+        if(Mode::getMode() == VERBOSE) {
+            cerr << e.what() << endl;
+            cerr << "in function line: " << e.f.repr() << endl;
+        }
+        exit(1);
     }
 
 }

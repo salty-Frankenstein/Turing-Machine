@@ -4,6 +4,7 @@
 #include<iostream>
 #include<numeric>
 #include<algorithm>
+#include<sstream>
 using namespace std;
 
 FuncLine::FuncLine(const State& _oldState,
@@ -31,6 +32,18 @@ bool FuncLine::operator<(const FuncLine& f) {
         < count(f.oldChar.begin(), f.oldChar.end(), '*');
 }
 
+string FuncLine::repr() const {
+    stringstream s;
+    s << oldState << ' ';
+    for(auto c : oldChar) { s << c; }
+    s << ' ';
+    for(auto c : newChar) { s << c; }
+    s << ' ';
+    for(auto c : direction) { s << c; }
+    s << ' ' << newState;
+    return s.str();
+}
+
 TuringMachine::TuringMachine(
     const std::list<State>& _stateSet,
     const std::list<Char>& _inputSet,
@@ -51,11 +64,35 @@ TuringMachine::TuringMachine(
     function(_function) {
 }
 
-bool TuringMachine::isWellFormed() const {
+void TuringMachine::checkWellFormed() const {
     int n = tapeNum;
-    return accumulate(function.begin(), function.end(), true,
-        [=](bool a, const FuncLine& b) {
-            return a && b.isWellFormed(n); });
+    for (auto f : function) {
+        if (!f.isWellFormed(n)) {
+            throw IllFormedError(
+                "function cannot match with the tape number", f);
+        }
+        try {
+            checkState(f.oldState);
+            checkState(f.newState);
+            for (auto c : f.oldChar) { checkTapeSymbol(c); }
+            for (auto c : f.newChar) { checkTapeSymbol(c); }
+        }
+        catch (const KeyError& e) {
+            throw IllFormedError(e.info +" is not declared", f);
+        }
+    }
+}
+
+void TuringMachine::checkState(const State& s) const {
+    if(!inSet(s, stateSet)) {
+        throw KeyError("state \"" + s + "\"");
+    }
+}
+
+void TuringMachine::checkTapeSymbol(const Char c) const {
+    if(c != '*' && !inSet(c, tapeSet)) {
+        throw KeyError(string("symbol \"") + c + "\"");
+    }
 }
 
 list<FuncLine> TuringMachine::sort(list<FuncLine> function) {
@@ -90,7 +127,7 @@ void TuringMachine::print() {
     // }
 }
 
-void FuncLine::print() {
+void FuncLine::print() const {
     cout << "Old state: " << oldState << endl;
     printList("Old char", oldChar);
     printList("New char", newChar);

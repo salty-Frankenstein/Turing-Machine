@@ -25,8 +25,10 @@ struct FuncLine {
     /* order of the pattern of the function, for sorting */
     bool operator<(const FuncLine& f);
 
+    std::string repr() const;
+
 #ifndef NDEBUG
-    void print(); //DEBUG
+    void print() const; //DEBUG
 #endif
 
     const State oldState;
@@ -38,6 +40,7 @@ struct FuncLine {
 
      /* Spec:
      * > all patterns of every function line is sorted
+     * > all symbols and states in the function have been declared
      */
 struct TuringMachine {
     TuringMachine(
@@ -51,8 +54,9 @@ struct TuringMachine {
         const std::list<FuncLine>& function
     );
 
-    /* checking if the machine is well-formed */
-    bool isWellFormed() const;
+    /* checking if the machine is well-formed, 
+     * throw an IllFormedError if not */
+    void checkWellFormed() const;
 
 #ifndef NDEBUG
     void print(); //DEBUG
@@ -68,8 +72,32 @@ struct TuringMachine {
     const std::list<FuncLine> function;
     
 private:
+    /* check if the element is in the given set, throw an KeyError if not */
+    void checkState(const State& s) const;
+    void checkTapeSymbol(const Char) const;
     std::list<FuncLine> sort(std::list<FuncLine> function);
 };
 
+struct KeyError : public std::exception {
+    KeyError(const std::string& s) : info(s) {}
+
+    const char* what() const throw () {
+        return info.c_str();
+    }
+
+    std::string info;
+};
+
+struct IllFormedError : public std::exception {
+    IllFormedError(const std::string& s, const FuncLine& _f) 
+     : info(s), f(_f) {}
+
+    const char* what() const throw () {
+        return info.c_str();
+    }
+
+    const std::string info;
+    const FuncLine f;
+};
 
 #endif

@@ -96,9 +96,7 @@ string Tape::showResult() {
 }
 
 Interpreter::Interpreter(const TuringMachine& _tm)
-    : tm(_tm), tapes(_tm.tapeNum), state(_tm.initState), step(0), halt(false) {
-    assert(tm.isWellFormed());
-}
+    : tm(_tm), tapes(_tm.tapeNum), state(_tm.initState), step(0), halt(false) {}
 
 void Interpreter::printState(ostream& os) {
     os << "Step\t: " << step << endl;
@@ -149,7 +147,7 @@ void Interpreter::execute(const string& s) {
                 // int x;
                 // cin >> x;
 #ifndef NDEBUG 
-                system("sleep 0.1");
+                system("sleep 1");
 #endif
             }
         }
@@ -175,7 +173,7 @@ void Interpreter::execute(const string& s) {
         else {
             err = "illegal input\n";
         }
-        error(err, -1);
+        error(err, 1);
     }
 }
 
