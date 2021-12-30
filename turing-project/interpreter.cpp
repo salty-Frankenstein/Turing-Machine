@@ -145,12 +145,15 @@ void Interpreter::execute(const string& s) {
                 cout << "---------------------------------------------\n";
                 singleStep();
                 printState(cout);
+#ifndef NDEBUG 
                 // int x;
                 // cin >> x;
-#ifndef NDEBUG 
                 system("sleep 1");
 #endif
             }
+            cout << "---------------------------------------------\n";
+            cout << "Result: " << tapes[0].showResult() << endl;
+            cout << "==================== END ====================" << endl;
         }
         else {
             while (!halt && !inSet(state, tm.finalStateSet)) {
@@ -169,7 +172,7 @@ void Interpreter::execute(const string& s) {
                 << "' was not declared in the set of input symbols\n"
                 << "Input: " + s + "\n"
                 << string(e.position + 7, ' ') << "^\n"
-                << "==================== END ====================";
+                << "==================== END ====================" << endl;
         }
         else {
             err << "illegal input" << endl;

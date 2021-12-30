@@ -39,13 +39,17 @@ void Shell::run() {
         runTuring(args[0], args[1]);
     }
     else {
-        //TODO: error handling
+        cerr << "Too many arguments given" << endl;
+        printHelp();
+        exit(1);
     }
 }
 
 void Shell::runTuring(const string& filePath, const string& input) {
     ifstream f(filePath);
-    // TODO: error handling
+    if (!f.is_open()) {
+        error("Input file doesn't exist\n", 1);
+    }
     Parser p;
     auto pcode = p.preprocess(p.readFile(f));
 #ifndef NDEBUG

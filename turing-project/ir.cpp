@@ -21,7 +21,6 @@ FuncLine::FuncLine(const State& _oldState,
 }
 
 bool FuncLine::isWellFormed(size_t n) const {
-    // TODO: check if all symbols and states are in the set
     return oldChar.size() == n
         && newChar.size() == n
         && direction.size() == n;
