@@ -73,8 +73,11 @@ TuringMachine Parser::parse(Parser::Code code) {
         auto blank = applyParsecLn_(isString("#B = ") >> parseChar, code);
         auto finalStateSet = applyParsecLn_(parseFinalStateSet, code);
         auto tapeNum = applyParsecLn_(parseTapeNum, code);
-        // TODO: handling tapeNum <= 0
-        assert(tapeNum > 0);
+        
+        if (tapeNum <= 0) {
+            throw KeyError("the tape number is less than 1");
+        }
+        
         list<FuncLine> func;
         while (!code.empty()) {
             func.push_back(parseFuncLine(code.front()));
@@ -88,13 +91,15 @@ TuringMachine Parser::parse(Parser::Code code) {
         return res;
     }
     catch (const EOF_Error& e) {
-        log("here");
+        cerr << "syntax error" << endl;
+        if(Mode::getMode() == VERBOSE) {
+            cerr << "unexpected end of file" << endl;
+        }
         exit(1);
-        //TODO
     }
     catch (const ParseError& e) {
         cerr << "syntax error" << endl;
-        if(Mode::getMode() == VERBOSE){
+        if(Mode::getMode() == VERBOSE) {
             cerr << e.what() << endl;
         }
         exit(1);

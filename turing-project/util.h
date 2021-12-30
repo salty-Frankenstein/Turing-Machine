@@ -9,13 +9,14 @@
 #include<list>
 #include<vector>
 
-inline void panic(const std::string& msg) {
 #ifndef NDEBUG
-    std::cerr << "\033[31mPanic: \033[0m";
-    std::cerr << msg << std::endl;
+#define PANIC(msg) do{ \
+    std::cerr << "\033[31mPanic: \033[0m"; \
+    std::cerr << msg << std::endl; \
+    assert(0); }while(0);
+#else
+#define PANIC(msg) do { exit(-1);} while(0);
 #endif
-    assert(0);
-}
 
 inline void log(const std::string& msg) {
 #ifndef NDEBUG
@@ -51,7 +52,7 @@ A& access(std::vector<A>& v, int i) {
     if (i < v.size()) {
         return v[i];
     }
-    panic("error accessing vector");
+    PANIC("error accessing vector");
 }
 
 struct ParseError : public std::exception {

@@ -75,7 +75,7 @@ private:
     /* check if the element is in the given set, throw an KeyError if not */
     void checkState(const State& s) const;
     void checkTapeSymbol(const Char) const;
-    std::list<FuncLine> sort(std::list<FuncLine> function);
+    static std::list<FuncLine> sort(std::list<FuncLine> function);
 };
 
 struct KeyError : public std::exception {

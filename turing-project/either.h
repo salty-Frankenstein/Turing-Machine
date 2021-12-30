@@ -29,7 +29,7 @@ namespace _Either
         L getLeft() { return val; }
 
         R getRight() {
-            panic("Trying to get Right value from Left");
+            PANIC("Trying to get Right value from Left");
             return {};
         }
 
@@ -49,7 +49,7 @@ namespace _Either
         R getRight() { return val; }
 
         L getLeft() {
-            panic("Trying to get Left value from Right");
+            PANIC("Trying to get Left value from Right");
             return {};
         }
 

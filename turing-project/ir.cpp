@@ -61,7 +61,7 @@ TuringMachine::TuringMachine(
     blank(_blank),
     finalStateSet(_finalStateSet),
     tapeNum(_tapeNum),
-    function(_function) {
+    function(sort(_function)) {
 }
 
 void TuringMachine::checkWellFormed() const {

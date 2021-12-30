@@ -3,6 +3,7 @@
 #include"config.h"
 #include<cassert>
 #include<algorithm>
+#include<sstream>
 using namespace std;
 
 Tape::Tape() : head(0), pos({ '_' }) {}
@@ -49,7 +50,7 @@ void Tape::moveHead(Direction d) {
         break;
     case '*': break;
     default:
-        panic("bad direction");
+        PANIC("bad direction");
     }
 }
 
@@ -160,20 +161,20 @@ void Interpreter::execute(const string& s) {
 
     }
     catch (const IllegalError& e) {
-        string err;
+        stringstream err;
         if (Mode::getMode() == VERBOSE) {
-            err = string("==================== ERR ====================\n")
-                + "error: '"
-                + s[e.position]
-                + "' was not declared in the set of input symbols\n"
-                + "Input: " + s + "\n"
-                + string(e.position + 7, ' ') + "^\n"
-                + "==================== END ====================";
+            err << "==================== ERR ====================\n"
+                << "error: '"
+                << s[e.position]
+                << "' was not declared in the set of input symbols\n"
+                << "Input: " + s + "\n"
+                << string(e.position + 7, ' ') << "^\n"
+                << "==================== END ====================";
         }
         else {
-            err = "illegal input\n";
+            err << "illegal input" << endl;
         }
-        error(err, 1);
+        error(err.str(), 1);
     }
 }
 
@@ -203,9 +204,6 @@ void Interpreter::singleStep() {
 void Interpreter::transfer() {
     for (auto fl : tm.function) {
         if (match(fl)) {
-            // log("applied:");
-            // fl.print();
-            // log("\\applied");
             for (int i = 0; i < tm.tapeNum; i++) {
                 // assign new tape characters
                 if (fl.newChar[i] != '*') { // wildcast
